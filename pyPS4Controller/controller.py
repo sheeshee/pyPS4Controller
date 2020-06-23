@@ -354,7 +354,8 @@ class Actions:
 
 class Controller(Actions):
 
-    EVENT_SIZE = struct.calcsize("LhBB")
+    EVENT_FORMAT = "3Bh2b"
+    EVENT_SIZE = struct.calcsize(EVENT_FORMAT)
 
     def __init__(self, interface, connecting_using_ds4drv=True, event_definition=None):
         """
@@ -424,7 +425,7 @@ class Controller(Actions):
                 _file = open(self.interface, "rb")
                 event = read_events()
                 while event:
-                    (tv_sec, value, button_type, button_id) = struct.unpack("LhBB", event)
+                    (*tv_sec, value, button_type, button_id) = struct.unpack(Controller.EVENT_FORMAT, event)
                     if self.debug:
                         print("button_id: {} button_type: {} value: {}".format(button_id, button_type, value))
                     if button_id not in self.black_listed_buttons:
