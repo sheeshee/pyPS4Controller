@@ -84,28 +84,28 @@ class Event:
 
     # Square / Triangle / Circle / X Button group #
     def circle_pressed(self):
-        return self.button_id == 1 and self.button_type == 1 and self.value == 1
-
-    def circle_released(self):
-        return self.button_id == 1 and self.button_type == 1 and self.value == 0
-
-    def x_pressed(self):
-        return self.button_id == 0 and self.button_type == 1 and self.value == 1
-
-    def x_released(self):
-        return self.button_id == 0 and self.button_type == 1 and self.value == 0
-
-    def triangle_pressed(self):
         return self.button_id == 2 and self.button_type == 1 and self.value == 1
 
-    def triangle_released(self):
+    def circle_released(self):
         return self.button_id == 2 and self.button_type == 1 and self.value == 0
 
-    def square_pressed(self):
+    def x_pressed(self):
+        return self.button_id == 1 and self.button_type == 1 and self.value == 1
+
+    def x_released(self):
+        return self.button_id == 1 and self.button_type == 1 and self.value == 0
+
+    def triangle_pressed(self):
         return self.button_id == 3 and self.button_type == 1 and self.value == 1
 
-    def square_released(self):
+    def triangle_released(self):
         return self.button_id == 3 and self.button_type == 1 and self.value == 0
+
+    def square_pressed(self):
+        return self.button_id == 0 and self.button_type == 1 and self.value == 1
+
+    def square_released(self):
+        return self.button_id == 0 and self.button_type == 1 and self.value == 0
 
     def options_pressed(self):
         return self.button_id == 9 and self.button_type == 1 and self.value == 1
@@ -354,8 +354,7 @@ class Actions:
 
 class Controller(Actions):
 
-    EVENT_FORMAT = "3Bh2b"
-    EVENT_SIZE = struct.calcsize(EVENT_FORMAT)
+    EVENT_SIZE = struct.calcsize("LhBB")
 
     def __init__(self, interface, connecting_using_ds4drv=True, event_definition=None):
         """
@@ -425,7 +424,7 @@ class Controller(Actions):
                 _file = open(self.interface, "rb")
                 event = read_events()
                 while event:
-                    (*tv_sec, value, button_type, button_id) = struct.unpack(Controller.EVENT_FORMAT, event)
+                    (tv_sec, value, button_type, button_id) = struct.unpack("LhBB", event)
                     if self.debug:
                         print("button_id: {} button_type: {} value: {}".format(button_id, button_type, value))
                     if button_id not in self.black_listed_buttons:
